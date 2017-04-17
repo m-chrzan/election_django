@@ -6,3 +6,6 @@ class Candidate(models.Model):
 
 class District(models.Model):
     number = models.IntegerField(unique = True)
+
+class Gmina(models.Model):
+    name = models.CharField(max_length = 256)
