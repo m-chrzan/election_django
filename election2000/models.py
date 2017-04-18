@@ -9,3 +9,8 @@ class District(models.Model):
 
 class Gmina(models.Model):
     name = models.CharField(max_length = 256)
+
+class Circuit(models.Model):
+    number = models.IntegerField()
+    district = models.ForeignKey("District")
+    gmina = models.ForeignKey("Gmina")
