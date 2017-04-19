@@ -19,6 +19,12 @@ class Circuit(models.Model):
     district = models.ForeignKey("District")
     gmina = models.ForeignKey("Gmina")
 
+    eligible = models.IntegerField(default = 0)
+    ballots_given_out = models.IntegerField(default = 0)
+    ballots_cast = models.IntegerField(default = 0)
+    ballots_invalid = models.IntegerField(default = 0)
+    ballots_valid = models.IntegerField(default = 0)
+
 class Votes(models.Model):
     candidate = models.ForeignKey("Candidate")
     circuit = models.ForeignKey("Circuit")
