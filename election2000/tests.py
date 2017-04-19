@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.db import IntegrityError
-from election2000.models import Candidate, District, Gmina, Circuit
+from election2000.models import Candidate, District, Gmina, Circuit, Votes
 
 class CandidateTestCase(TestCase):
     @classmethod
@@ -107,3 +107,47 @@ class CircuitTestCase(TestCase):
         district = District.objects.get(number = 3)
         circuits = district.circuit_set.all()
         self.assertEqual(len(circuits), 1)
+
+class VotesTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        district = District.objects.create(number = 1)
+        gmina = Gmina.objects.create(code = 1, name = "Gmina 1")
+
+        circtuit1 = Circuit.objects.create(number = 1, district = district,
+                gmina = gmina)
+        circtuit2 = Circuit.objects.create(number = 2, district = district,
+                gmina = gmina)
+
+        candidate1 = Candidate.objects.create(first_name = "Janusz",
+                last_name = "Korwin-Mikke")
+        candidate2 = Candidate.objects.create(first_name = "Aleksander",
+                last_name = "Kwaśniewski")
+
+        Votes.objects.create(candidate = candidate1, circuit = circtuit1,
+                number = 5)
+        Votes.objects.create(candidate = candidate1, circuit = circtuit2,
+                number = 20)
+        Votes.objects.create(candidate = candidate2, circuit = circtuit1,
+                number = 10)
+        Votes.objects.create(candidate = candidate2, circuit = circtuit2,
+                number = 16)
+
+    def test_query_from_candidate(self):
+        candidate = Candidate.objects.get(first_name = "Janusz")
+        total_votes = sum([votes.number for votes in candidate.votes_set.all()])
+        self.assertEqual(total_votes, 25)
+
+    def test_query_from_circuit(self):
+        circuit = Circuit.objects.get(number = 1)
+        total_votes = sum([votes.number for votes in circuit.votes_set.all()])
+        self.assertEqual(total_votes, 15)
+
+    def test_no_repeats(self):
+        candidate = Candidate.objects.get(first_name = "Aleksander")
+        circuit = Circuit.objects.get(number = 2)
+        votes = Votes(candidate = candidate, circuit = circuit,
+                number = 11)
+
+        with self.assertRaises(IntegrityError):
+            votes.save()

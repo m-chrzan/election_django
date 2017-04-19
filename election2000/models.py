@@ -18,3 +18,11 @@ class Circuit(models.Model):
     number = models.IntegerField()
     district = models.ForeignKey("District")
     gmina = models.ForeignKey("Gmina")
+
+class Votes(models.Model):
+    candidate = models.ForeignKey("Candidate")
+    circuit = models.ForeignKey("Circuit")
+    number = models.IntegerField()
+
+    class Meta:
+        unique_together = ('candidate', 'circuit')
