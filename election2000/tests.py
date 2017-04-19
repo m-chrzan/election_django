@@ -46,6 +46,28 @@ class DistrictTestCase(TestCase):
         with self.assertRaises(IntegrityError):
             district.save()
 
+class GminaTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        Gmina.objects.create(code = 1, name = "Gmina 1")
+        Gmina.objects.create(code = 2, name = "Gmina 2")
+
+    def test_query_by_code(self):
+        gmina = Gmina.objects.get(code = 1)
+        self.assertEqual(gmina.name, "Gmina 1")
+
+    def test_querty_by_name(self):
+        gmina = Gmina.objects.get(name = "Gmina 2")
+        self.assertEqual(gmina.code, 2)
+
+    def test_code_is_unique(self):
+        gmina = Gmina(code = 1, name = "Gmina 3")
+        with self.assertRaises(IntegrityError):
+            gmina.save()
+
+    def test_name_can_repeat(self):
+        Gmina.objects.create(code = 3, name = "Gmina 1")
+
 class CircuitTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -53,10 +75,10 @@ class CircuitTestCase(TestCase):
         district2 = District.objects.create(number = 2)
         district3 = District.objects.create(number = 3)
 
-        gmina1 = Gmina.objects.create(name = "Gmina 1")
-        gmina2 = Gmina.objects.create(name = "Gmina 2")
-        gmina3 = Gmina.objects.create(name = "Gmina 3")
-        gmina4 = Gmina.objects.create(name = "Gmina 4")
+        gmina1 = Gmina.objects.create(code = 1, name = "Gmina 1")
+        gmina2 = Gmina.objects.create(code = 2, name = "Gmina 2")
+        gmina3 = Gmina.objects.create(code = 3, name = "Gmina 3")
+        gmina4 = Gmina.objects.create(code = 4, name = "Gmina 4")
 
         Circuit.objects.create(number = 1, district = district1, gmina = gmina1)
         Circuit.objects.create(number = 2, district = district1, gmina = gmina1)
