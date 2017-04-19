@@ -25,6 +25,9 @@ class Circuit(models.Model):
     ballots_invalid = models.IntegerField(default = 0)
     ballots_valid = models.IntegerField(default = 0)
 
+    class Meta:
+        unique_together = ('number', 'district', 'gmina')
+
 class Votes(models.Model):
     candidate = models.ForeignKey("Candidate")
     circuit = models.ForeignKey("Circuit")

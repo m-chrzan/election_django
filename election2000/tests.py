@@ -108,6 +108,14 @@ class CircuitTestCase(TestCase):
         circuits = district.circuit_set.all()
         self.assertEqual(len(circuits), 1)
 
+    def test_no_repeats(self):
+        district = District.objects.get(number = 2)
+        gmina = Gmina.objects.get(code = 3)
+        circuit = Circuit(number = 1, district = district, gmina = gmina)
+
+        with self.assertRaises(IntegrityError):
+            circuit.save()
+
 class VotesTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
