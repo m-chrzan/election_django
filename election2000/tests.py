@@ -28,6 +28,11 @@ class CandidateTestCase(TestCase):
         with self.assertRaises(IntegrityError):
             candidate.save()
 
+    def test_full_name_unique(self):
+        candidate = Candidate(first_name = "Janusz", last_name = "Korwin-Mikke")
+        with self.assertRaises(IntegrityError):
+            candidate.save()
+
 class DistrictTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):

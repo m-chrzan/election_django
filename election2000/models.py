@@ -4,6 +4,9 @@ class Candidate(models.Model):
     first_name = models.CharField(max_length = 256)
     last_name = models.CharField(max_length = 256)
 
+    class Meta:
+        unique_together = ('first_name', 'last_name')
+
 class District(models.Model):
     number = models.IntegerField(unique = True)
 
