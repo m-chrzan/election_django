@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.db import IntegrityError
-from election2000.models import Candidate, District, Gmina, Circuit, Votes
+from election2000.models import (Candidate, District, Gmina, Circuit, Votes,
+        Voivodeship)
 
 class CandidateTestCase(TestCase):
     @classmethod
@@ -36,10 +37,12 @@ class CandidateTestCase(TestCase):
 class DistrictTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        District.objects.create(number = 1)
-        District.objects.create(number = 2)
-        District.objects.create(number = 3)
-        District.objects.create(number = 4)
+        voivodeship = Voivodeship.objects.create(name = "V")
+
+        District.objects.create(number = 1, voivodeship = voivodeship)
+        District.objects.create(number = 2, voivodeship = voivodeship)
+        District.objects.create(number = 3, voivodeship = voivodeship)
+        District.objects.create(number = 4, voivodeship = voivodeship)
 
     def test_query_by_range(self):
         districts = District.objects.filter(number__gte = 2).filter(
@@ -47,7 +50,8 @@ class DistrictTestCase(TestCase):
         self.assertEqual(len(districts), 2)
 
     def test_number_unique(self):
-        district = District(number = 4)
+        voivodeship = Voivodeship.objects.get(name = "V")
+        district = District(number = 4, voivodeship = voivodeship)
         with self.assertRaises(IntegrityError):
             district.save()
 
@@ -76,9 +80,14 @@ class GminaTestCase(TestCase):
 class CircuitTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        district1 = District.objects.create(number = 1)
-        district2 = District.objects.create(number = 2)
-        district3 = District.objects.create(number = 3)
+        voivodeship = Voivodeship.objects.create(name = "V")
+
+        district1 = District.objects.create(number = 1,
+                voivodeship = voivodeship)
+        district2 = District.objects.create(number = 2,
+                voivodeship = voivodeship)
+        district3 = District.objects.create(number = 3,
+                voivodeship = voivodeship)
 
         gmina1 = Gmina.objects.create(code = 1, name = "Gmina 1")
         gmina2 = Gmina.objects.create(code = 2, name = "Gmina 2")
@@ -119,7 +128,10 @@ class CircuitTestCase(TestCase):
 class VotesTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        district = District.objects.create(number = 1)
+        voivodeship = Voivodeship.objects.create(name = "V")
+
+        district = District.objects.create(number = 1,
+                voivodeship = voivodeship)
         gmina = Gmina.objects.create(code = 1, name = "Gmina 1")
 
         circtuit1 = Circuit.objects.create(number = 1, district = district,

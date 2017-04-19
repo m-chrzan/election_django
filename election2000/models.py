@@ -7,8 +7,12 @@ class Candidate(models.Model):
     class Meta:
         unique_together = ('first_name', 'last_name')
 
+class Voivodeship(models.Model):
+    name = models.CharField(max_length = 256, unique = True)
+
 class District(models.Model):
     number = models.IntegerField(unique = True)
+    voivodeship = models.ForeignKey("Voivodeship")
 
 class Gmina(models.Model):
     code = models.IntegerField(unique = True)
