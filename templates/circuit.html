@@ -1,0 +1,15 @@
+<form action="" method="post">
+    {{ csrf_input }}
+    {{ form }}
+    <input type="submit" value="Submit" />
+</form>
+
+<ul>
+{% for candidate in candidates %}
+  <li>
+  <a href='{{candidate.first_name}} {{candidate.last_name}}'>
+    {{candidate.first_name}} {{candidate.last_name}}
+  </a>
+  </li>
+{% endfor %}
+</ul>

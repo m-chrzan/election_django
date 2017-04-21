@@ -23,5 +23,7 @@ urlpatterns = [
     url(r'^Polska/(?P<voivodeship>(?:\w|-)+)/(?P<district>\w+)/$', views.district),
     url(r'^Polska/(?P<voivodeship>(?:\w|-)+)/(?P<district>\d+)/(?P<gmina>[^\/]+)/$',
         views.gmina),
+    url(r'^Polska/(?P<voivodeship>(?:\w|-)+)/(?P<district>\d+)/(?P<gmina>[^\/]+)/(?P<circuit>[^\/]+)/$',
+        views.circuit),
     url(r'^admin/', admin.site.urls)
 ]
