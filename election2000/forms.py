@@ -5,3 +5,8 @@ class CircuitForm(ModelForm):
     class Meta:
         model = Circuit
         fields = ['eligible', 'ballots_given_out', 'ballots_valid']
+
+class VotesForm(ModelForm):
+    class Meta:
+        model = Votes
+        fields = ['number']
