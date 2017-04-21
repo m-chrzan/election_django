@@ -19,5 +19,6 @@ from election2000 import views
 
 urlpatterns = [
     url(r'^Polska/$', views.country),
+    url(r'^Polska/(?P<voivodeship>(?:\w|-)+)/$', views.voivodeship),
     url(r'^admin/', admin.site.urls)
 ]

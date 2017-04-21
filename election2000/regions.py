@@ -54,3 +54,39 @@ class CountryRegion(Region):
 
     def get_vote_set(self):
         return Votes.objects.all()
+
+class VoivodeshipRegion(Region):
+    def __init__(self, name):
+        super().__init__(name)
+
+        self.voivodeship = Voivodeship.objects.get(name = name)
+        self.locative = "województwie"
+        self.subregion_nominative = "okręg"
+        self.subregions = self.get_subregions()
+        self.template = 'base.html'
+        self.votes = self.get_votes()
+        self.statistics = self.get_statistics()
+        self.region_path = ['Polska', name]
+
+    def get_circuits(self):
+        return Circuit.objects.filter(district__voivodeship = self.voivodeship)
+
+    def get_districts(self):
+        return District.objects.filter(voivodeship = self.voivodeship)
+
+    def get_subregions(self):
+        subregions = []
+        for district in self.get_districts():
+            statistics = Circuit.objects.filter(district = district).aggregate(Sum('eligible'),
+                    Sum('ballots_given_out'))
+            subregions.append({
+                    'name': str(district.number),
+                    'turnout': statistics['ballots_given_out__sum'] /
+                        statistics['eligible__sum']
+            })
+
+        return subregions
+
+    def get_vote_set(self):
+        return Votes.objects.filter(circuit__district__voivodeship =
+                self.voivodeship)

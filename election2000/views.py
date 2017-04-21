@@ -7,6 +7,9 @@ from django.template import loader
 def country(request):
     return render_region(CountryRegion())
 
+def voivodeship(request, voivodeship):
+    return render_region(VoivodeshipRegion(voivodeship))
+
 def render_region(region):
     template = loader.get_template(region.template)
     rendered = template.render({'region': region})
