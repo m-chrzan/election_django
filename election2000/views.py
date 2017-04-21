@@ -10,6 +10,9 @@ def country(request):
 def voivodeship(request, voivodeship):
     return render_region(VoivodeshipRegion(voivodeship))
 
+def district(request, voivodeship, district):
+    return render_region(DistrictRegion(district))
+
 def render_region(region):
     template = loader.get_template(region.template)
     rendered = template.render({'region': region})
