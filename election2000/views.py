@@ -13,6 +13,9 @@ def voivodeship(request, voivodeship):
 def district(request, voivodeship, district):
     return render_region(DistrictRegion(district))
 
+def gmina(request, voivodeship, district, gmina):
+    return render_region(GminaRegion(gmina, district))
+
 def render_region(region):
     template = loader.get_template(region.template)
     rendered = template.render({'region': region})

@@ -127,3 +127,35 @@ class DistrictRegion(Region):
             })
 
         return subregions
+
+class GminaRegion(Region):
+    def __init__(self, name, district):
+        super().__init__(name)
+
+        self.district = District.objects.get(number = int(district))
+        self.locative = "gminie"
+        self.subregion_nominative = "obwód"
+        self.subregions = self.get_subregions()
+        self.template = 'base.html'
+        self.votes = self.get_votes()
+        self.statistics = self.get_statistics()
+        self.region_path = ['Polska', self.district.voivodeship.name,
+                str(self.district.number), name]
+
+    def get_circuits(self):
+        return Circuit.objects.filter(district = self.district,
+                gmina__name = self.name)
+
+    def get_vote_set(self):
+        return Votes.objects.filter(circuit__district = self.district,
+                    circuit__gmina__name = self.name)
+
+    def get_subregions(self):
+        subregions = []
+        for circuit in self.get_circuits():
+            subregions.append({
+                    'name': str(circuit.number),
+                    'turnout': circuit.ballots_given_out / circuit.eligible
+            })
+
+        return subregions
