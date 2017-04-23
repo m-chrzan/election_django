@@ -7,16 +7,16 @@ from election2000.forms import CircuitForm, VotesForm
 from django.template import loader
 
 def country(request):
-    return render_region(CountryRegion())
+    return render_region(request, CountryRegion())
 
 def voivodeship(request, voivodeship):
-    return render_region(VoivodeshipRegion(voivodeship))
+    return render_region(request, VoivodeshipRegion(voivodeship))
 
 def district(request, voivodeship, district):
-    return render_region(DistrictRegion(district))
+    return render_region(request, DistrictRegion(district))
 
 def gmina(request, voivodeship, district, gmina):
-    return render_region(GminaRegion(gmina, district))
+    return render_region(request, GminaRegion(gmina, district))
 
 def circuit(request, voivodeship, district, gmina, circuit):
     candidates = Candidate.objects.all()
@@ -64,7 +64,5 @@ def save_votes(votes, data):
     votes.number = data['number']
     votes.save()
 
-def render_region(region):
-    template = loader.get_template(region.template)
-    rendered = template.render({'region': region})
-    return HttpResponse(rendered)
+def render_region(request, region):
+    return render(request, region.template, { 'request': request, 'region': region })
