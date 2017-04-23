@@ -63,6 +63,13 @@
       </ul>
     </nav>
 
+    {% if request.user.is_authenticated %}
+      Zalogowany jako {{request.user.username}},
+      <a href='/logout/?next={{request.path}}'>wyloguj się</a>
+    {% else %}
+      <a href='/login/?next={{request.path}}'>Zaloguj się</a>
+    {% endif %}
+
     <section>
       <h2>Procentowa liczba głosów w {{ region.locative }}</h2>
         <div id='piechart'></div>

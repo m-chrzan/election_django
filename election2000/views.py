@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from election2000.regions import GminaRegion, DistrictRegion, VoivodeshipRegion, CountryRegion
 from election2000.models import Circuit, Candidate, Votes
-from election2000.forms import CircuitForm, VotesForm
+from election2000.forms import CircuitForm, VotesForm, UserForm
 from django.template import loader
 
 def country(request):
@@ -52,6 +54,25 @@ def candidate(request, voivodeship, district, gmina, circuit, candidate):
         form = VotesForm(instance = votes)
 
     return render(request, 'votes.html', {'form': form, 'votes': votes})
+
+def login_view(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            user = authenticate(**form.cleaned_data)
+            if user is not None:
+                login(request, user)
+                next_page = request.GET.get('next')
+                return redirect(next_page)
+    else:
+        form = UserForm()
+
+    return render(request, 'login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    next = request.GET.get('next')
+    return redirect(next)
 
 
 def save_circuit(circuit, data):
