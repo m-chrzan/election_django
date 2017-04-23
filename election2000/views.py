@@ -20,6 +20,7 @@ def district(request, voivodeship, district):
 def gmina(request, voivodeship, district, gmina):
     return render_region(request, GminaRegion(gmina, district))
 
+@login_required
 def circuit(request, voivodeship, district, gmina, circuit):
     candidates = Candidate.objects.all()
     circ = Circuit.objects.get(district__number = int(district),
@@ -36,6 +37,7 @@ def circuit(request, voivodeship, district, gmina, circuit):
     return render(request, 'circuit.html', {'form': form, 'circuit': circuit,
         'candidates': candidates})
 
+@login_required
 def candidate(request, voivodeship, district, gmina, circuit, candidate):
     first_name = ' '.join(candidate.split()[0:-1])
     last_name = candidate.split()[-1]
