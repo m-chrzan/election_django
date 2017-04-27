@@ -19,7 +19,7 @@
     </td>
     <td>{{"%.2f%%" | format(100 * subregion.turnout)}}</td>
     <td>
-      {% if subregion.document.name is not none %}
+      {% if subregion.document %}
       <a href='{{subregion.document.url}}'>{{subregion.document.name}}</a>
       {% else %}
       <a href='{{request.path}}{{subregion.name}}/upload/'>+</a>
