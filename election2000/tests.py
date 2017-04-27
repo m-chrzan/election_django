@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
 from django.db import IntegrityError
 from election2000.models import (Candidate, District, Gmina, Circuit, Votes,
         Voivodeship)
@@ -171,3 +172,61 @@ class VotesTestCase(TestCase):
 
         with self.assertRaises(IntegrityError):
             votes.save()
+
+class TestViewsTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create_user(username = "user", password = "password")
+        voivodeship = Voivodeship.objects.create(name = "V")
+
+        district = District.objects.create(number = 1,
+                voivodeship = voivodeship)
+        gmina = Gmina.objects.create(code = 1, name = "Gmina 1")
+
+        circtuit1 = Circuit.objects.create(number = 1, district = district,
+                gmina = gmina, eligible = 50, ballots_valid = 15, document = None)
+        circtuit2 = Circuit.objects.create(number = 2, district = district,
+                gmina = gmina, eligible = 60, ballots_valid = 36, document = None)
+
+        candidate1 = Candidate.objects.create(first_name = "Janusz",
+                last_name = "Korwin-Mikke")
+        candidate2 = Candidate.objects.create(first_name = "Aleksander",
+                last_name = "Kwaśniewski")
+
+        Votes.objects.create(candidate = candidate1, circuit = circtuit1,
+                number = 5)
+        Votes.objects.create(candidate = candidate1, circuit = circtuit2,
+                number = 20)
+        Votes.objects.create(candidate = candidate2, circuit = circtuit1,
+                number = 10)
+        Votes.objects.create(candidate = candidate2, circuit = circtuit2,
+                number = 16)
+
+    def test_country_view_loads(self):
+        response = self.client.get('/Polska/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_voivodeship_view_loads(self):
+        response = self.client.get('/Polska/V/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_district_view_loads(self):
+        response = self.client.get('/Polska/V/1/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_gmina_view_loads(self):
+        response = self.client.get('/Polska/V/1/Gmina 1/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_upload_view_denies_not_logged_in(self):
+        response = self.client.get('/Polska/V/1/Gmina 1/1/upload/')
+        self.assertRedirects(response, '/login/?next=/Polska/V/1/Gmina%25201/1/upload/')
+
+    def test_circuit_view_denies_not_logged_in(self):
+        response = self.client.get('/Polska/V/1/Gmina 1/1/')
+        self.assertRedirects(response, '/login/?next=/Polska/V/1/Gmina%25201/1/')
+
+    def test_circuit_loads(self):
+        self.client.login(username = 'user', password = 'password')
+        response = self.client.get('/Polska/V/1/Gmina 1/1/')
+        self.assertEqual(response.status_code, 200)
