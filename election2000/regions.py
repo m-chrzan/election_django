@@ -30,7 +30,7 @@ class CountryRegion(Region):
         self.locative = "kraju"
         self.subregion_nominative = "województwo"
         self.subregions = self.get_subregions()
-        self.template = 'base.html'
+        self.template = 'region.html'
         self.votes = self.get_votes()
         self.statistics = self.get_statistics()
         self.region_path = ['Polska']
@@ -63,7 +63,7 @@ class VoivodeshipRegion(Region):
         self.locative = "województwie"
         self.subregion_nominative = "okręg"
         self.subregions = self.get_subregions()
-        self.template = 'base.html'
+        self.template = 'region.html'
         self.votes = self.get_votes()
         self.statistics = self.get_statistics()
         self.region_path = ['Polska', name]
@@ -99,7 +99,7 @@ class DistrictRegion(Region):
         self.locative = "okręgu"
         self.subregion_nominative = "gmina"
         self.subregions = self.get_subregions()
-        self.template = 'base.html'
+        self.template = 'region.html'
         self.votes = self.get_votes()
         self.statistics = self.get_statistics()
         self.region_path = ['Polska', self.district.voivodeship.name, name]
@@ -136,7 +136,7 @@ class GminaRegion(Region):
         self.locative = "gminie"
         self.subregion_nominative = "obwód"
         self.subregions = self.get_subregions()
-        self.template = 'base.html'
+        self.template = 'gmina.html'
         self.votes = self.get_votes()
         self.statistics = self.get_statistics()
         self.region_path = ['Polska', self.district.voivodeship.name,

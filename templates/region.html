@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}
+  {{region.name}} | Wybory Prezydenta Rzeczypospolitej Polskiej 2000
+{% endblock %}
+
+{% block head_extra %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load('current',
+    {'packages':[{% block google_includes %}'corechart', 'table'{% endblock %}]}
+  );
+
+  {% block google_charts %}
+  google.charts.setOnLoadCallback(drawChart);
+  function drawChart() {
+
+    var candidates = [
+      {% for candidate, votes in region.votes.items() %}
+        ['{{candidate | title}}', {{100 * votes / region.statistics.ballots_valid}}],
+      {% endfor %}
+    ];
+
+    // Sort candidates by vote percentage
+    candidates.sort((a,b) => {
+      return a[1] - b[1];
+    })
+
+    var data = google.visualization.arrayToDataTable([
+      ['Kandydat', 'Procent głosów'], ...candidates
+    ]);
+
+    var options = {
+      sliceVisibilityThreshold: 0.03,
+      tooltip: {text: 'percentage', trigger: 'selection'},
+      height: 400,
+      width: 1000
+    };
+
+    var piechart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+    piechart.draw(data, options);
+  }
+  {% endblock %}
+</script>
+{% endblock %}
+
+{% block content %}
+<ul>
+  {% for i in range(region.region_path | length) %}
+  <li>
+    <a href='/{{"/".join(region.region_path[0:i+1])}}'>{{region.region_path[i]}}</a>
+  </li>
+  {% endfor %}
+</ul>
+
+<nav>
+  {% if request.user.is_authenticated %}
+    Zalogowany jako {{request.user.username}},
+    <a href='/logout/?next={{request.path}}'>wyloguj się</a>
+  {% else %}
+    <a href='/login/?next={{request.path}}'>Zaloguj się</a>
+  {% endif %}
+</nav>
+
+<form method='post' action='/search_results/'>
+  {{ csrf_input }}
+  {{ form }}
+  <input type="submit" value="Szukaj" />
+</form>
+
+<section>
+  <h2>Procentowa liczba głosów w {{ region.locative }}</h2>
+    <div id='piechart'></div>
+</section>
+
+<section id='results'>
+  <h2> Wyniki poszczegółnych kandydatów w {{ region.locative }}</h2>
+    <table>
+      <tr>
+        <th>Kandydat</th>
+        <th>Liczba głosów</th>
+        <th>Procentowa liczba głosów</th>
+      </tr>
+      {% for candidate, votes in region.votes.items() %}
+      {% if loop.index % 2 == 0 %}
+      <tr class='even-row'>
+      {% else %}
+      <tr class='odd-row'>
+      {% endif %}
+        <td>{{candidate | title}}</td>
+        <td>{{votes}}</td>
+        <td>{{"%.2f%%" | format(100 * votes / region.statistics.ballots_valid)}}</td>
+      {% endfor %}
+    </table>
+</section>
+
+<section id='turnout'>
+  <h2>Frekwencja</h2>
+    {% block turnout %}
+    <table>
+      <tr>
+        <th>{{region.subregion_nominative}}</th>
+        <th>Frekwencja</th>
+      </tr>
+      {% for subregion in region.subregions %}
+      {% if loop.index % 2 == 0 %}
+      <tr class='even-row'>
+      {% else %}
+      <tr class='odd-row'>
+      {% endif %}
+        <td>
+          <a href='{{subregion.name}}'>
+          {{subregion.name}}
+          </a>
+        </td>
+        <td>{{"%.2f%%" | format(100 * subregion.turnout)}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endblock %}
+</section>
+{% endblock %}

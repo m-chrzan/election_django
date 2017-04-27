@@ -1,0 +1,31 @@
+{% extends 'region.html' %}
+{% block turnout %}
+<table>
+  <tr>
+    <th>{{region.subregion_nominative}}</th>
+    <th>Frekwencja</th>
+    <th></th>
+  </tr>
+  {% for subregion in region.subregions %}
+  {% if loop.index % 2 == 0 %}
+  <tr class='even-row'>
+  {% else %}
+  <tr class='odd-row'>
+  {% endif %}
+    <td>
+      <a href='{{subregion.name}}'>
+      {{subregion.name}}
+      </a>
+    </td>
+    <td>{{"%.2f%%" | format(100 * subregion.turnout)}}</td>
+    <td>
+      {% if subregion.document.name is not none %}
+      <a href='{{subregion.document.url}}'>{{subregion.document.name}}</a>
+      {% else %}
+      <a href='{{request.path}}{{subregion.name}}/upload/'>+</a>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
