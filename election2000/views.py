@@ -67,6 +67,7 @@ def logout_view(request):
     next = request.GET.get('next')
     return redirect(next)
 
+@login_required
 def upload(request, voivodeship, district, gmina, circuit):
     if request.method == "POST":
         form = UploadForm(request.POST, request.FILES)
