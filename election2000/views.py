@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -91,6 +91,22 @@ def upload(request, voivodeship, district, gmina, circuit):
 
     return render(request, 'upload.html', {'form': form})
 
+def search_results(request):
+    if request.method == "POST":
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            gminas = []
+            for gm in Gmina.objects.filter(name__icontains = query):
+                for district in District.objects.filter(circuit__gmina = gm).distinct():
+                    gminas.append({
+                        'name': gm.name,
+                        'url': reverse(gmina, args = [district.voivodeship.name,
+                            str(district.number), gm.name])
+                    })
+
+            return render(request, 'search_results.html', { 'gminas': gminas })
+
 def save_circuit(circuit, data):
     circuit.eligible = data['eligible']
     circuit.ballots_given_out = data['ballots_given_out']
@@ -102,4 +118,5 @@ def save_votes(votes, data):
     votes.save()
 
 def render_region(request, region):
-    return render(request, region.template, { 'request': request, 'region': region })
+    form = SearchForm()
+    return render(request, region.template, { 'request': request, 'region': region, 'form': form })

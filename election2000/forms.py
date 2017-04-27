@@ -18,3 +18,6 @@ class UserForm(forms.Form):
 
 class UploadForm(forms.Form):
     document = forms.FileField(label = "Dokument")
+
+class SearchForm(forms.Form):
+    query = forms.CharField(label = "Szukaj gminy")

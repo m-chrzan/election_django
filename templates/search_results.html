@@ -1,0 +1,18 @@
+{% if gminas %}
+  <table>
+    <th></th>
+  {% for gmina in gminas %}
+    {% if loop.index % 2 == 0 %}
+    <tr class='even-row'>
+    {% else %}
+    <tr class='odd-row'>
+    {% endif %}
+    <td><a href='{{gmina.url}}'>{{gmina.name}}</a></td>
+    </tr>
+  {% endfor %}
+  </table>
+{% else %}
+  <table><th></th>
+    <tr><td> Nie znaleziono żadnych gmin. </td></tr>
+  </table>
+{% endif %}
