@@ -29,6 +29,9 @@ class Circuit(models.Model):
     ballots_invalid = models.IntegerField(default = 0)
     ballots_valid = models.IntegerField(default = 0)
 
+    document = models.FileField(upload_to = 'documents', default = None,
+            null = True)
+
     class Meta:
         unique_together = ('number', 'district', 'gmina')
 

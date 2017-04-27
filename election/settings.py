@@ -116,3 +116,8 @@ STATIC_URL = '/static/'
 # Login page
 
 LOGIN_URL = '/login/'
+
+# Media URL
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

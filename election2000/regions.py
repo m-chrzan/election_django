@@ -155,7 +155,8 @@ class GminaRegion(Region):
         for circuit in self.get_circuits():
             subregions.append({
                     'name': str(circuit.number),
-                    'turnout': circuit.ballots_given_out / circuit.eligible
+                    'turnout': circuit.ballots_valid / circuit.eligible,
+                    'document': circuit.document
             })
 
         return subregions

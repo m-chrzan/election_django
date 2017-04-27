@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from election2000 import views
+from election import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^Polska/$', views.country),
@@ -25,9 +27,10 @@ urlpatterns = [
         views.gmina),
     url(r'^Polska/(?P<voivodeship>(?:\w|-)+)/(?P<district>\d+)/(?P<gmina>[^\/]+)/(?P<circuit>[^\/]+)/$',
         views.circuit),
-    url(r'^Polska/(?P<voivodeship>(?:\w|-)+)/(?P<district>\d+)/(?P<gmina>[^\/]+)/(?P<circuit>[^\/]+)/(?P<candidate>[^\/]+)$',
-        views.candidate),
+    url(r'^Polska/(?P<voivodeship>(?:\w|-)+)/(?P<district>\d+)/(?P<gmina>[^\/]+)/(?P<circuit>[^\/]+)/upload/$',
+        views.upload),
     url(r'^login/', views.login_view),
     url(r'^logout/', views.logout_view),
-    url(r'^admin/', admin.site.urls)
-]
+    url(r'^search_results/', views.search_results),
+    url(r'^admin/', admin.site.urls),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

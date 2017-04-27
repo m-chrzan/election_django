@@ -15,3 +15,6 @@ class VotesForm(forms.ModelForm):
 class UserForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget = forms.PasswordInput)
+
+class UploadForm(forms.Form):
+    document = forms.FileField(label = "Dokument")

@@ -4,8 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from election2000.regions import GminaRegion, DistrictRegion, VoivodeshipRegion, CountryRegion
-from election2000.models import Circuit, Candidate, Votes
-from election2000.forms import CircuitForm, VotesForm, UserForm
+from election2000.models import Circuit, Candidate, Votes, Gmina, District
+from election2000.forms import UserForm, UploadForm, SearchForm
 from django.template import loader
 
 def country(request):
@@ -76,6 +76,20 @@ def logout_view(request):
     next = request.GET.get('next')
     return redirect(next)
 
+def upload(request, voivodeship, district, gmina, circuit):
+    if request.method == "POST":
+        form = UploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            circ = Circuit.objects.get(district__number = int(district),
+                    gmina__name = gmina, number = int(circuit))
+            circ.document = request.FILES['document']
+            circ.save()
+            gmina_path = '/'.join(request.path.split('/')[0:-3]) + '/'
+            return redirect(gmina_path)
+    else:
+        form = UploadForm()
+
+    return render(request, 'upload.html', {'form': form})
 
 def save_circuit(circuit, data):
     circuit.eligible = data['eligible']
