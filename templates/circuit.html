@@ -1,15 +1,18 @@
 <form action="" method="post">
-    {{ csrf_input }}
-    {{ form }}
-    <input type="submit" value="Submit" />
+  {{ csrf_input }}
+  <table>
+    <th></th><th></th>
+  {% for candidate in candidates %}
+    {% if loop.index % 2 == 0 %}
+    <tr class='even-row'>
+    {% else %}
+    <tr class='odd-row'>
+    {% endif %}
+      <td> {{candidate.first_name}} {{candidate.last_name}} </td>
+      <td> <input name='{{candidate.id}}' type='number' value='{{candidate.votes}}'/> </td>
+    </tr>
+  {% endfor %}
+  <td></td><td><input type="submit" value="Zapisz zmiany" /></td>
+  </table>
 </form>
-
-<ul>
-{% for candidate in candidates %}
-  <li>
-  <a href='{{candidate.first_name}} {{candidate.last_name}}'>
-    {{candidate.first_name}} {{candidate.last_name}}
-  </a>
-  </li>
-{% endfor %}
-</ul>
+{% endblock %}
